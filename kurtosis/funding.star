@@ -132,7 +132,8 @@ def _execute_account_funding(plan, funding_config, l2_info):
             command=[
                 "node", "/workspace/fund-all.js",
                 l2_info["sequencer"]["rpc_url"],
-                funding_config["funnel_key"]
+                funding_config["funnel_key"],
+                "/workspace/accounts.json"
             ]
         )
     )
