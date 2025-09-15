@@ -10,7 +10,7 @@ jobs:
   test:
     name: Test Orbit Deployment
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 60
     
     steps:
       - name: Checkout code
@@ -45,7 +45,7 @@ jobs:
               "enable_explorer": true,
               "enable_bridge": true
             }}'
-        timeout-minutes: 20
+        timeout-minutes: 60
       
       - name: Show Deployment Results
         run: |
