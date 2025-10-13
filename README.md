@@ -4,6 +4,8 @@
 
 Kurtosis-Orbit is a comprehensive deployment tool that allows you to spin up complete Arbitrum Orbit rollup environments in minutes. Built on top of [Kurtosis](https://kurtosis.com/), it provides a simple, reproducible way to deploy L2 chains for development, testing, and experimentation.
 
+[DOCS](https://kurtosis-orbit-docs.vercel.app/)
+
 ## ✨ Features
 
 - **🚀 One-command deployment** - Deploy a complete Orbit stack with a single command
@@ -59,6 +61,8 @@ After deployment, you'll have a complete Arbitrum Orbit environment including:
 - **Optional block explorer** (Blockscout)
 
 ## 📖 Documentation
+
+You can see the hosted [docs](https://kurtosis-orbit-docs.vercel.app/).
 
 - **[Getting Started Guide](./docs/getting-started.md)** - Step-by-step deployment walkthrough
 - **[Installation Guide](./docs/installation.md)** - Detailed installation instructions
