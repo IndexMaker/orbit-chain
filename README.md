@@ -66,6 +66,21 @@ After deployment, you'll have a complete Arbitrum Orbit environment including:
 - **[Account Management](./docs/accounts.md)** - Working with development accounts
 - **[Architecture Overview](./docs/architecture.md)** - How Kurtosis-Orbit works
 - **[Troubleshooting](./docs/troubleshooting.md)** - Common issues and solutions
+- **[Analytics System](./analytics/README.md)** - Download tracking and usage statistics
+
+### Disable Analytics
+
+To disable analytics tracking, add this to your configuration:
+
+```yaml
+orbit_config:
+  enable_analytics: false
+```
+
+Or set the environment variable:
+```bash
+export KURTOSIS_ORBIT_ANALYTICS=false
+```
 
 ## 📄 License
 
