@@ -66,7 +66,6 @@ After deployment, you'll have a complete Arbitrum Orbit environment including:
 - **[Account Management](./docs/accounts.md)** - Working with development accounts
 - **[Architecture Overview](./docs/architecture.md)** - How Kurtosis-Orbit works
 - **[Troubleshooting](./docs/troubleshooting.md)** - Common issues and solutions
-- **[Analytics System](./analytics/README.md)** - Download tracking and usage statistics
 
 ### Disable Analytics
 
