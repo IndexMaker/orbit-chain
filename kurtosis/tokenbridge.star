@@ -1,44 +1,21 @@
 """
-Token bridge deployment module.
-Note: Token bridge for custom gas token chains requires special handling.
-For now, we skip the deployment if it fails and return placeholder values.
-The core Orbit chain functionality works without the token bridge.
+Token bridge deployment module with ERC20 gas token support.
+Uses mock docker to read config from mounted files for Kurtosis compatibility.
 """
 
 def deploy_token_bridge(plan, config, l1_info, nodes_info, rollup_info):
     """
     Deploy token bridge between L1 and L2.
-    For custom gas token chains, the standard token bridge deployment may fail.
-    In that case, we gracefully skip and the chain still functions.
+    Supports both ETH and custom ERC20 gas token chains.
     """
     use_custom_gas_token = config.get("use_custom_gas_token", False)
     native_token_address = rollup_info.get("native_token_address", "")
 
     if use_custom_gas_token and native_token_address and native_token_address != "":
-        plan.print("⚠️ Custom gas token chain detected - token bridge may have limited support")
+        plan.print("Deploying token bridge for ERC20 gas token chain...")
         plan.print("Native token address: {}".format(native_token_address))
-        plan.print("The native ERC20Bridge was already deployed with the rollup contracts.")
-        plan.print("Skipping standard ERC20 token bridge deployment for custom gas token chain.")
-
-        # For custom gas token chains, the ERC20Bridge is already deployed
-        # Return the bridge addresses from the rollup deployment
-        return {
-            "artifacts": {
-                "network": None,
-            },
-            "l1": {
-                "gateway": "skipped-custom-gas-token",
-                "router": "skipped-custom-gas-token",
-            },
-            "l2": {
-                "gateway": "skipped-custom-gas-token",
-                "router": "skipped-custom-gas-token",
-            },
-            "native_token": native_token_address,
-            "erc20_bridge": rollup_info.get("bridge_address", ""),
-        }
-
-    plan.print("Deploying token bridge for ETH gas token chain...")
+    else:
+        plan.print("Deploying token bridge for ETH gas token chain...")
 
     # Build environment variables
     env_vars = {
@@ -50,10 +27,16 @@ def deploy_token_bridge(plan, config, l1_info, nodes_info, rollup_info):
         "CHILD_RPC": nodes_info["sequencer"]["rpc_url"],
     }
 
+    # Add native token address for custom gas token chains
+    if use_custom_gas_token and native_token_address and native_token_address != "":
+        env_vars["NATIVE_TOKEN"] = native_token_address
+        env_vars["NATIVE_TOKEN_ADDRESS"] = native_token_address
+
     deploy_cmd = (
         "echo 'Starting token bridge deployment...' && " +
         "echo 'Environment variables:' && " +
-        "env | grep -E '(PARENT_RPC|CHILD_RPC|ROLLUP_ADDRESS)' && " +
+        "env | grep -E '(PARENT_RPC|CHILD_RPC|ROLLUP_ADDRESS|NATIVE_TOKEN)' && " +
+        "echo 'Config file:' && cat /config/deployment.json && " +
         "echo 'Running yarn deploy:local:token-bridge...' && " +
         "if ! yarn deploy:local:token-bridge; then " +
         "    echo 'Token bridge deployment failed!' && " +
@@ -70,7 +53,7 @@ def deploy_token_bridge(plan, config, l1_info, nodes_info, rollup_info):
         "tail -f /dev/null"
     )
 
-    # Deploy bridge contracts
+    # Deploy bridge contracts - mount the rollup deployment config
     bridge_deployer = plan.add_service(
         name="token-bridge-deployer",
         config=ServiceConfig(
@@ -83,6 +66,9 @@ def deploy_token_bridge(plan, config, l1_info, nodes_info, rollup_info):
             ),
             cmd=["sh", "-c", deploy_cmd],
             env_vars=env_vars,
+            files={
+                "/config": rollup_info["artifacts"]["deployment"],
+            },
         ),
     )
 
