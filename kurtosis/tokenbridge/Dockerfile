@@ -1,6 +1,6 @@
 FROM node:18-bullseye-slim
 
-# Install necessary dependencies
+# Install necessary dependencies including jq for JSON processing
 RUN apt-get update && \
     apt-get install -y git python3 make gcc g++ curl jq && \
     apt-get clean && \
@@ -24,3 +24,6 @@ RUN git clone --no-checkout https://github.com/OffchainLabs/token-bridge-contrac
 # Install dependencies and build
 RUN yarn install && yarn cache clean
 RUN yarn build
+
+# Create a mock docker command that returns empty (so the script falls back to rollup address)
+RUN echo '#!/bin/sh\necho ""' > /usr/local/bin/docker && chmod +x /usr/local/bin/docker
