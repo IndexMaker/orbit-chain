@@ -2,7 +2,7 @@
 Ethereum L1 deployment using ethereum-package.
 """
 
-ethereum_pkg = import_module("github.com/ethpandaops/ethereum-package/main.star@0e1548a638fde573fa77840441c4a2cf149ef3d6")
+ethereum_pkg = import_module("github.com/ethpandaops/ethereum-package/main.star@c6ca605fc7af611d88864355285f8ef4ebfd42a1")
 config_module = import_module("./config.star")
 
 def deploy_ethereum_l1(plan, config):

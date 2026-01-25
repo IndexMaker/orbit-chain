@@ -1,5 +1,6 @@
 """
 Configuration module with validation and nitro-testnode alignment.
+Custom gas token support added.
 """
 
 # Standard test mnemonic used by nitro-testnode (same as Hardhat/Ganache)
@@ -41,43 +42,42 @@ STANDARD_ACCOUNTS = {
 
 # Default prefunded accounts for development
 DEFAULT_PREFUNDED_ACCOUNTS = [
-  {
-    "name": "Development account 1",
-    "address": "0x2093882c87B768469fbD434973bc7a4d20f73a51",
-    "privateKey": "0xe81662053657623793d767b6cb13e614f6c6916b1488de33928baea8ce513c4c",
-    "balance_eth": "100",
-    "description": "Development account 1"
-  },
-  {
-    "name": "Development account 2",
-    "address": "0x6D819ceDC7B20b8F755Ec841CBd5934812Cbe13b",
-    "privateKey": "0x203298e6a2b845c6dde179f3f991ae4c081ad963e20c9fe39d45893c00a0aea5",
-    "balance_eth": "100",
-    "description": "Development account 2"
-  },
-  {
-    "name": "Development account 3",
-    "address": "0xCE46e65a7A7527499e92337E5FBf958eABf314fa",
-    "privateKey": "0x237112963af91b42ca778fbe434a819b7e862cd025be3c86ce453bdd3e633165",
-    "balance_eth": "100",
-    "description": "Development account 3"
-  },
-  {
-    "name": "Development account 4",
-    "address": "0xdafa61604B4Aa82092E1407F8027c71026982E6f",
-    "privateKey": "0xdbd4bf6a5edb48b1819a2e94920c156ff8296670d5df72e4b8a22df0b6ce573d",
-    "balance_eth": "100",
-    "description": "Development account 4"
-  },
-  {
-    "name": "Development account 5",
-    "address": "0x1663f734483ceCB07AD6BC80919eA9a5cdDb7FE9",
-    "privateKey": "0xae804cd43a8471813628b123189674469b92e3874674e540b9567e9e986d394d",
-    "balance_eth": "100",
-    "description": "Development account 5"
-  }
+    {
+        "name": "Development account 1",
+        "address": "0x2093882c87B768469fbD434973bc7a4d20f73a51",
+        "privateKey": "0xe81662053657623793d767b6cb13e614f6c6916b1488de33928baea8ce513c4c",
+        "balance_eth": "100",
+        "description": "Development account 1"
+    },
+    {
+        "name": "Development account 2",
+        "address": "0x6D819ceDC7B20b8F755Ec841CBd5934812Cbe13b",
+        "privateKey": "0x203298e6a2b845c6dde179f3f991ae4c081ad963e20c9fe39d45893c00a0aea5",
+        "balance_eth": "100",
+        "description": "Development account 2"
+    },
+    {
+        "name": "Development account 3",
+        "address": "0xCE46e65a7A7527499e92337E5FBf958eABf314fa",
+        "privateKey": "0x237112963af91b42ca778fbe434a819b7e862cd025be3c86ce453bdd3e633165",
+        "balance_eth": "100",
+        "description": "Development account 3"
+    },
+    {
+        "name": "Development account 4",
+        "address": "0xdafa61604B4Aa82092E1407F8027c71026982E6f",
+        "privateKey": "0xdbd4bf6a5edb48b1819a2e94920c156ff8296670d5df72e4b8a22df0b6ce573d",
+        "balance_eth": "100",
+        "description": "Development account 4"
+    },
+    {
+        "name": "Development account 5",
+        "address": "0x1663f734483ceCB07AD6BC80919eA9a5cdDb7FE9",
+        "privateKey": "0xae804cd43a8471813628b123189674469b92e3874674e540b9567e9e986d394d",
+        "balance_eth": "100",
+        "description": "Development account 5"
+    }
 ]
-
 
 # Default configuration aligned with nitro-testnode
 DEFAULT_CONFIG = {
@@ -89,7 +89,15 @@ DEFAULT_CONFIG = {
     "challenge_period_blocks": 20,
     "stake_token": "0x0000000000000000000000000000000000000000",
     "base_stake": "0",
-    
+
+    # CUSTOM GAS TOKEN CONFIG
+    # Set to an ERC20 address to use custom gas token, or empty string for ETH
+    "native_token": "",
+    "native_token_name": "IND",
+    "native_token_symbol": "IND",
+    "native_token_decimals": 18,
+    "deploy_native_token": True,  # If true and native_token is empty, deploy a new token
+
     # Account configuration
     "owner_private_key": STANDARD_ACCOUNTS["l2owner"]["private_key"],
     "owner_address": STANDARD_ACCOUNTS["l2owner"]["address"],
@@ -97,20 +105,19 @@ DEFAULT_CONFIG = {
     "sequencer_address": STANDARD_ACCOUNTS["sequencer"]["address"],
     "validator_private_key": STANDARD_ACCOUNTS["validator"]["private_key"],
     "validator_address": STANDARD_ACCOUNTS["validator"]["address"],
-    
+
     # Node configuration
     "simple_mode": True,
     "validator_count": 1,
     "enable_bridge": True,
     "enable_explorer": True,
-    # "enable_timeboost": False,
-    
+
     # Funding configuration
-    "standard_account_balance_l1": "100",  # ETH balance for standard accounts on L1
-    "standard_account_balance_l2": "100",  # ETH balance for standard accounts on L2
+    "standard_account_balance_l1": "100",
+    "standard_account_balance_l2": "100",
     "pre_fund_accounts": ["funnel", "sequencer", "validator", "l2owner"],
-    "prefund_addresses": [],  # Additional addresses to fund
-    
+    "prefund_addresses": [],
+
     # Docker images and versions
     "nitro_image": "offchainlabs/nitro-node:v3.5.5-90ee45c",
     "nitro_contracts_branch": "v2.1.1-beta.0",
@@ -119,31 +126,33 @@ DEFAULT_CONFIG = {
     "postgres_image": "postgres:13.6",
 }
 
+
 def process_config(args):
     """
     Process and validate user configuration with proper validation patterns.
     """
-    # Start with validated defaults
     config_dict = _get_validated_defaults()
-    
-    # Process user overrides with structured validation
+
     if "orbit_config" in args:
         config_dict = _merge_user_config(config_dict, args["orbit_config"])
-    
-    # Perform comprehensive validation
+
     _validate_complete_config(config_dict)
-    
-    # Generate secure dynamic values
+
     config_dict["jwt_secret"] = _generate_jwt_secret()
     config_dict["val_jwt_secret"] = _generate_jwt_secret()
-    
+
+    # Determine if using custom gas token
+    config_dict["use_custom_gas_token"] = config_dict["native_token"] != "" or config_dict["deploy_native_token"]
+
     return config_dict
+
 
 def _get_validated_defaults():
     """Get default configuration with validation."""
     config_dict = dict(DEFAULT_CONFIG)
     validate_config(config_dict)
     return config_dict
+
 
 def _merge_user_config(base_config, user_config):
     """Merge user configuration with proper validation."""
@@ -154,11 +163,11 @@ def _merge_user_config(base_config, user_config):
             base_config[key] = value
         else:
             fail("Invalid configuration field: '{}'. Check the documentation for valid options.".format(key))
-    
-    # Validate critical key/address pairs
+
     _validate_key_address_pairs(user_config)
-    
+
     return base_config
+
 
 def _parse_rollup_mode(value):
     """Parse rollup mode with proper validation."""
@@ -174,6 +183,7 @@ def _parse_rollup_mode(value):
     else:
         fail("Invalid rollup_mode type. Must be boolean or string.")
 
+
 def _validate_key_address_pairs(config):
     """Validate that private keys have corresponding addresses."""
     key_address_pairs = [
@@ -181,91 +191,78 @@ def _validate_key_address_pairs(config):
         ("sequencer_private_key", "sequencer_address"),
         ("validator_private_key", "validator_address")
     ]
-    
+
     for key_field, addr_field in key_address_pairs:
         if key_field in config and addr_field not in config:
             fail("{} must be provided when {} is specified.".format(addr_field, key_field))
 
+
 def _validate_complete_config(config):
     """Perform comprehensive configuration validation."""
     validate_config(config)
-    
-    # Additional validation for complex scenarios
+
     if not config["rollup_mode"] and not config.get("anytrust_config"):
         fail("AnyTrust mode requires 'anytrust_config' with data availability settings.")
-    
+
     if config["validator_count"] > 1:
         fail("Multiple validators are not yet supported. Set validator_count to 0 or 1.")
 
+
 def _generate_jwt_secret():
     """Generate a secure JWT secret for production use."""
-    # For development, use deterministic secret
-    # In production, this should use proper randomness
-    return "0x" + ("a" * 64)  # More recognizable than all zeros
+    return "0x" + ("a" * 64)
+
 
 def validate_config(config):
     """
     Validate configuration parameters.
     """
-    # Chain ID validation
     if config["chain_id"] <= 0:
         fail("chain_id must be positive")
-    
+
     if config["l1_chain_id"] <= 0:
         fail("l1_chain_id must be positive")
-    
+
     if config["chain_id"] == config["l1_chain_id"]:
         fail("L2 chain_id must be different from L1 chain_id")
-    
-    # Challenge period validation
+
     if config["challenge_period_blocks"] <= 0:
         fail("challenge_period_blocks must be positive")
-    
-    # Validator count validation
+
     if config["validator_count"] < 0:
         fail("validator_count must be non-negative")
-    
+
     if config["validator_count"] > 1:
         print("WARNING: Multiple validators not fully supported. Using 1 validator.")
         config["validator_count"] = 1
-    
-    # Enhanced mode validation
+
     if not config["rollup_mode"]:
         print("WARNING: AnyTrust mode selected. Make sure a data availability service is configured.")
         if config.get("anytrust_config") == None:
             fail("AnyTrust mode requires an 'anytrust_config' with DAS settings.")
-    
-    # Timeboost validation
-    if config.get("enable_timeboost"):
-        print("WARNING: Timeboost is experimental and may not be fully functional.")
 
-# Legacy function kept for compatibility
+
 def generate_jwt_secret():
-    """
-    Generate a deterministic JWT secret for development.
-    Use _generate_jwt_secret() for new code.
-    """
+    """Legacy function kept for compatibility."""
     return _generate_jwt_secret()
+
 
 def get_all_prefunded_accounts(config):
     """
     Get a consolidated list of all accounts that should be prefunded.
-    Returns a dict with account info including balances for L1 and L2.
     """
     accounts = {}
-    
-    # Add standard accounts
+
     for acc_name in config["pre_fund_accounts"]:
         if acc_name in STANDARD_ACCOUNTS:
             acc_info = STANDARD_ACCOUNTS[acc_name]
-            # Funnel account needs extra balance to fund all other accounts
             if acc_name == "funnel":
-                balance_l1 = "10000"  # Extra balance for funding other accounts
+                balance_l1 = "10000"
                 balance_l2 = "10000"
             else:
                 balance_l1 = config["standard_account_balance_l1"]
                 balance_l2 = config["standard_account_balance_l2"]
-            
+
             accounts[acc_info["address"]] = {
                 "name": acc_name,
                 "private_key": acc_info["private_key"],
@@ -273,19 +270,17 @@ def get_all_prefunded_accounts(config):
                 "balance_l2": balance_l2,
                 "description": acc_info["description"]
             }
-    
-    # Always fund the deployer account with extra balance
+
     deployer_address = "0x3f1Eae7D46d88F08fc2F8ed27FCb2AB183EB2d0E"
     if deployer_address not in accounts:
         accounts[deployer_address] = {
             "name": "deployer",
             "private_key": STANDARD_ACCOUNTS["funnel"]["private_key"],
-            "balance_l1": "10000",  # Large balance for deployments
+            "balance_l1": "10000",
             "balance_l2": "10000",
             "description": "Deployment account"
         }
-    
-    # Add default prefunded accounts
+
     for acc in DEFAULT_PREFUNDED_ACCOUNTS:
         if acc["address"] not in accounts:
             accounts[acc["address"]] = {
@@ -295,8 +290,7 @@ def get_all_prefunded_accounts(config):
                 "balance_l2": acc["balance_eth"],
                 "description": acc["description"]
             }
-    
-    # Add any custom prefund addresses
+
     if config["prefund_addresses"]:
         for addr in config["prefund_addresses"]:
             if addr.startswith("0x") and len(addr) == 42:
@@ -310,8 +304,9 @@ def get_all_prefunded_accounts(config):
                     }
             else:
                 print("WARNING: Invalid address format '{}'; skipping prefund.".format(addr))
-    
+
     return accounts
+
 
 def get_prefunded_accounts_json(config):
     """
@@ -319,10 +314,9 @@ def get_prefunded_accounts_json(config):
     """
     accounts = {}
     all_prefunded = get_all_prefunded_accounts(config)
-    
+
     for addr, info in all_prefunded.items():
-        # Convert ETH to wei (multiply by 10^18)
         balance_wei = str(int(float(info["balance_l1"]) * 1000000000000000000))
         accounts[addr] = {"balance": balance_wei}
-    
+
     return json.encode(accounts)

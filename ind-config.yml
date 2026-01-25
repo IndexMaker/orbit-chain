@@ -1,0 +1,27 @@
+# IND Orbit Chain Configuration
+# Custom gas token deployment on local testnet
+
+orbit_config:
+  # Chain identifiers
+  chain_name: "IND-Chain"
+  chain_id: 421614  # Unique chain ID for IND chain
+  l1_chain_id: 1337  # Local L1 chain ID
+
+  # Rollup configuration
+  rollup_mode: true  # Rollup mode (not AnyTrust)
+  challenge_period_blocks: 20
+
+  # Custom Gas Token Configuration
+  native_token: ""  # Empty = deploy new token
+  native_token_name: "IND Token"
+  native_token_symbol: "IND"
+  native_token_decimals: 18
+  deploy_native_token: true
+
+  # Node configuration
+  simple_mode: true
+  validator_count: 1
+
+  # Services
+  enable_bridge: true
+  enable_explorer: true
