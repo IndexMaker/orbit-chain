@@ -121,7 +121,7 @@ DEFAULT_CONFIG = {
     # Docker images and versions
     "nitro_image": "offchainlabs/nitro-node:v3.5.5-90ee45c",
     "nitro_contracts_branch": "v2.1.1-beta.0",
-    "token_bridge_branch": "v1.2.2",
+    "token_bridge_branch": "v1.2.5",
     "blockscout_image": "offchainlabs/blockscout:v1.1.0-0e716c8",
     "postgres_image": "postgres:13.6",
 }

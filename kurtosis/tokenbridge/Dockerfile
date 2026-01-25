@@ -6,8 +6,8 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Set token bridge version (can be overridden at build time)
-ARG TOKEN_BRIDGE_BRANCH=v1.2.2
+# Set token bridge version - v1.2.5 has native token support
+ARG TOKEN_BRIDGE_BRANCH=v1.2.5
 
 # Install Foundry (required for token bridge contracts)
 RUN curl -L https://foundry.paradigm.xyz | bash

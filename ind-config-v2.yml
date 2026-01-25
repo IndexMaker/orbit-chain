@@ -1,0 +1,18 @@
+# IND Orbit Chain Configuration v2
+# With pre-deployed IND token address
+
+orbit_config:
+  chain_name: "IND-Chain"
+  chain_id: 421614
+  l1_chain_id: 1337
+  rollup_mode: true
+  challenge_period_blocks: 20
+  
+  # Use existing IND token
+  native_token: "0x43C9c3Ab961c49f8d42227628617747b1da7bcF0"
+  deploy_native_token: false
+  
+  simple_mode: true
+  validator_count: 1
+  enable_bridge: true
+  enable_explorer: true
