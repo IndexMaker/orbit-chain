@@ -4,7 +4,7 @@
 orbit_config:
   # Chain identifiers
   chain_name: "IND-Chain"
-  chain_id: 421614  # Unique chain ID for IND chain
+  chain_id: 111222333  # Unique chain ID for IND chain
   l1_chain_id: 1337  # Local L1 chain ID
 
   # Rollup configuration
