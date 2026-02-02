@@ -31,11 +31,8 @@ async function transferERC20() {
 
   let provider;
   try {
-    // Create provider with explicit network to avoid ENS issues
-    provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-
-    // Disable ENS resolution for this provider
-    provider.network.ensAddress = null;
+    // Use StaticJsonRpcProvider to avoid ENS lookups and network auto-detection
+    provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl);
 
     const wallet = new ethers.Wallet(fromPrivateKey, provider);
 
