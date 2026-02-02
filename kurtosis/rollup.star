@@ -303,6 +303,20 @@ def deploy_rollup_contracts(plan, config, l1_info):
         ),
     )["output"].strip()
 
+    # Extract ERC20Inbox address for custom gas token chains
+    # For ERC20 gas token chains, inbox is actually the ERC20Inbox
+    erc20_inbox_address = ""
+    if use_custom_gas_token:
+        erc20_inbox_result = plan.exec(
+            service_name="orbit-deployer",
+            recipe=ExecRecipe(
+                command=["sh", "-c", "cat /config/deployment.json | jq -r '.inbox // .\"erc20-inbox\" // \"\"' | tr -d '\\n'"]
+            ),
+        )
+        erc20_inbox_address = erc20_inbox_result["output"].strip()
+        if erc20_inbox_address and erc20_inbox_address != "" and erc20_inbox_address != "null":
+            plan.print("ERC20Inbox Address: {}".format(erc20_inbox_address))
+
     # Extract native token address if deployed
     native_token_address = ""
     if use_custom_gas_token:
@@ -328,7 +342,9 @@ def deploy_rollup_contracts(plan, config, l1_info):
         "bridge_address": bridge_address,
         "inbox_address": inbox_address,
         "sequencer_inbox_address": sequencer_inbox_address,
+        "erc20_inbox_address": erc20_inbox_address,
         "owner_address": config["owner_address"],
         "sequencer_address": config["sequencer_address"],
         "native_token_address": native_token_address,
+        "use_custom_gas_token": use_custom_gas_token,
     }
