@@ -18,7 +18,11 @@ async function transferERC20() {
     process.exit(1);
   }
 
-  const [rpcUrl, fromPrivateKey, tokenAddress, toAddress, amount] = args;
+  const [rpcUrl, fromPrivateKey, tokenAddressRaw, toAddressRaw, amount] = args;
+
+  // Normalize addresses to prevent ENS resolution on local networks
+  const tokenAddress = ethers.utils.getAddress(tokenAddressRaw);
+  const toAddress = ethers.utils.getAddress(toAddressRaw);
 
   console.log(`📤 Transferring ${amount} tokens`);
   console.log(`Token: ${tokenAddress}`);
@@ -26,7 +30,12 @@ async function transferERC20() {
 
   let provider;
   try {
+    // Create provider with explicit network to avoid ENS issues
     provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+
+    // Disable ENS resolution for this provider
+    provider.network.ensAddress = null;
+
     const wallet = new ethers.Wallet(fromPrivateKey, provider);
 
     console.log(`From: ${wallet.address}`);

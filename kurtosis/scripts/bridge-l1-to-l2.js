@@ -57,9 +57,13 @@ async function bridgeL1ToL2() {
 
   let l1Provider, l2Provider;
   try {
-    // Connect to L1 and L2
+    // Connect to L1 and L2 with ENS disabled for local networks
     l1Provider = new ethers.providers.JsonRpcProvider(l1RpcUrl);
     l2Provider = new ethers.providers.JsonRpcProvider(l2RpcUrl);
+
+    // Disable ENS resolution for local networks
+    l1Provider.network.ensAddress = null;
+    l2Provider.network.ensAddress = null;
 
     // Create wallet from funnel private key
     const l1Wallet = new ethers.Wallet(funnelPrivateKey, l1Provider);
