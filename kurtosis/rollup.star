@@ -323,7 +323,7 @@ def deploy_rollup_contracts(plan, config, l1_info):
         native_token_result = plan.exec(
             service_name="orbit-deployer",
             recipe=ExecRecipe(
-                command=["sh", "-c", "cat /config/native_token.json 2>/dev/null | jq -r '.nativeToken' || cat /config/deployment.json | jq -r '.\"native-token\" // .nativeToken // .feeToken // \"\"' | tr -d '\\n'"]
+                command=["sh", "-c", "(cat /config/native_token.json 2>/dev/null | jq -r '.nativeToken' || cat /config/deployment.json | jq -r '.\"native-token\" // .nativeToken // .feeToken // \"\"') | tr -d '\\n'"]
             ),
         )
         native_token_address = native_token_result["output"].strip()

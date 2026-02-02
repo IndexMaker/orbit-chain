@@ -21,8 +21,9 @@ async function transferERC20() {
   const [rpcUrl, fromPrivateKey, tokenAddressRaw, toAddressRaw, amount] = args;
 
   // Normalize addresses to prevent ENS resolution on local networks
-  const tokenAddress = ethers.utils.getAddress(tokenAddressRaw);
-  const toAddress = ethers.utils.getAddress(toAddressRaw);
+  // Also trim whitespace/newlines that may come from shell output
+  const tokenAddress = ethers.utils.getAddress(tokenAddressRaw.trim());
+  const toAddress = ethers.utils.getAddress(toAddressRaw.trim());
 
   console.log(`📤 Transferring ${amount} tokens`);
   console.log(`Token: ${tokenAddress}`);
