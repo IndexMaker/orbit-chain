@@ -237,8 +237,8 @@ async function bridgeETH(
 
 async function waitForL2Balance(l2Wallet, l2BalanceBefore, unit) {
   console.log(`\n⏳ Waiting for L2 balance to update...`);
-  const maxWaitTime = 120; // 2 minutes
-  const checkInterval = 2; // 2 seconds
+  const maxWaitTime = 300; // 5 minutes (retryables can take a while)
+  const checkInterval = 5; // 5 seconds
 
   for (let i = 0; i < maxWaitTime / checkInterval; i++) {
     const l2BalanceAfter = await l2Wallet.getBalance();
